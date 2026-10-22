@@ -12,80 +12,71 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Hebrew:wght@400;500;700&family=Karantina:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;800&display=swap">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
 <div class="wrap">
-  <header class="masthead">
-    <p class="eyebrow">Frey &amp; Osborne · אוניברסיטת אוקספורד · <span class="num" dir="ltr">702</span> מקצועות</p>
-    <h1>מי יוחלף קודם על ידי <span class="ai" dir="ltr">AI</span>?</h1>
-    <p class="lede">בכל סיבוב יש שני מקצועות. בחרו את זה שלפי המחקר נמצא בסיכון גבוה יותר לאוטומציה. המשחק לא נגמר, והזוגות נעשים קשים יותר ככל שהרצף מתארך.</p>
+  <header class="top">
+    <div class="intro">
+      <h1>מי יוחלף קודם על ידי AI?</h1>
+      <p class="lede">בחרו את המקצוע שבסיכון גבוה יותר לאוטומציה, לפי מחקר מאוניברסיטת אוקספורד.</p>
+    </div>
+    <dl class="stats" aria-label="התוצאה שלך">
+      <div><dt>נכונות</dt><dd><span class="num" dir="ltr" id="stat-correct">0/0</span></dd></div>
+      <div><dt>רצף</dt><dd><span class="num" dir="ltr" id="stat-streak">0</span></dd></div>
+      <div><dt>שיא</dt><dd><span class="num" dir="ltr" id="stat-best">0</span></dd></div>
+    </dl>
   </header>
 
-  <dl class="scoreboard" aria-label="התוצאה שלך">
-    <div><dt>נכונות</dt><dd><span class="num" dir="ltr" id="stat-correct">0/0</span></dd></div>
-    <div><dt>רצף</dt><dd><span class="num" dir="ltr" id="stat-streak">0</span></dd></div>
-    <div><dt>שיא</dt><dd><span class="num" dir="ltr" id="stat-best">0</span></dd></div>
-    <div><dt>רמה</dt><dd><span class="num" dir="ltr"><span id="stat-level">1</span><span class="level-of">/10</span></span></dd></div>
-  </dl>
-
-  <main class="arena" id="arena">
-    <button class="job" id="job-0" type="button">
-      <span class="job-tag" aria-hidden="true"></span>
-      <span class="job-head">
-        <span class="job-emoji" aria-hidden="true"></span>
-        <span class="job-title">
-          <span class="job-name"></span>
-          <span class="job-en" dir="ltr"></span>
-        </span>
+  <main class="arena">
+    <button class="choice choice-red" id="job-0" type="button">
+      <span class="badges" aria-hidden="true">
+        <span class="badge badge-first" hidden>יוחלף קודם</span>
+        <span class="badge badge-pick" hidden></span>
       </span>
-      <span class="job-result" hidden>
-        <span class="job-pct num" dir="ltr"></span>
-        <span class="meter" aria-hidden="true"><span class="meter-fill"></span></span>
-        <span class="job-label">סיכון לאוטומציה (אוקספורד)</span>
-        <span class="job-rank"></span>
-        <span class="job-ms"></span>
+      <span class="choice-emoji" aria-hidden="true"></span>
+      <span class="choice-name"></span>
+      <span class="choice-en" dir="ltr"></span>
+      <span class="choice-result" hidden>
+        <span class="choice-pct num" dir="ltr"></span>
+        <span class="bar" aria-hidden="true"><span class="bar-fill"></span></span>
+        <span class="choice-label">סיכון לאוטומציה</span>
       </span>
-      <span class="stamp" aria-hidden="true" hidden>יוחלף קודם</span>
     </button>
 
     <div class="versus" aria-hidden="true">או</div>
 
-    <button class="job" id="job-1" type="button">
-      <span class="job-tag" aria-hidden="true"></span>
-      <span class="job-head">
-        <span class="job-emoji" aria-hidden="true"></span>
-        <span class="job-title">
-          <span class="job-name"></span>
-          <span class="job-en" dir="ltr"></span>
-        </span>
+    <button class="choice choice-blue" id="job-1" type="button">
+      <span class="badges" aria-hidden="true">
+        <span class="badge badge-first" hidden>יוחלף קודם</span>
+        <span class="badge badge-pick" hidden></span>
       </span>
-      <span class="job-result" hidden>
-        <span class="job-pct num" dir="ltr"></span>
-        <span class="meter" aria-hidden="true"><span class="meter-fill"></span></span>
-        <span class="job-label">סיכון לאוטומציה (אוקספורד)</span>
-        <span class="job-rank"></span>
-        <span class="job-ms"></span>
+      <span class="choice-emoji" aria-hidden="true"></span>
+      <span class="choice-name"></span>
+      <span class="choice-en" dir="ltr"></span>
+      <span class="choice-result" hidden>
+        <span class="choice-pct num" dir="ltr"></span>
+        <span class="bar" aria-hidden="true"><span class="bar-fill"></span></span>
+        <span class="choice-label">סיכון לאוטומציה</span>
       </span>
-      <span class="stamp" aria-hidden="true" hidden>יוחלף קודם</span>
     </button>
   </main>
 
   <section class="verdict" id="verdict" aria-live="polite">
     <div class="verdict-copy">
       <p class="verdict-title" id="verdict-title">מי יוחלף קודם?</p>
-      <p class="verdict-text" id="verdict-text">לחצו על המקצוע שלדעתכם בסיכון גבוה יותר.</p>
+      <p class="verdict-text" id="verdict-text">לחצו על אחד המקצועות.</p>
       <p class="verdict-note" id="verdict-note" hidden></p>
     </div>
     <button class="next" id="next" type="button" hidden>לזוג הבא ←</button>
   </section>
 
-  <footer class="colophon">
-    <p>הנתונים: Frey &amp; Osborne, אוניברסיטת אוקספורד (2013) · Tomlinson ואחרים, Microsoft Research (2025)</p>
-    <div class="colophon-actions">
-      <button class="link-button" id="open-about" type="button">על הנתונים</button>
-      <button class="link-button" id="share" type="button">שיתוף השיא</button>
+  <footer class="foot">
+    <p>הנתונים: אוניברסיטת אוקספורד (<span dir="ltr">Frey &amp; Osborne, 2013</span>) ו-<span dir="ltr">Microsoft Research</span> (2025)</p>
+    <div class="foot-actions">
+      <button class="link" id="open-about" type="button">על הנתונים</button>
+      <button class="link" id="share" type="button">שיתוף השיא</button>
       <span class="share-status" id="share-status" role="status"></span>
     </div>
   </footer>
@@ -97,17 +88,17 @@
 
     <h3>המדד שקובע את התשובה</h3>
     <p>כל אחוז במשחק הוא <strong>ההסתברות למחשוב</strong> של המקצוע, מתוך המחקר של קרל בנדיקט פריי ומייקל אוסבורן מאוניברסיטת אוקספורד, <span dir="ltr">“The Future of Employment: How Susceptible Are Jobs to Computerisation?”</span> (2013, ובגרסת כתב עת ב-<span dir="ltr">Technological Forecasting and Social Change</span>, 2017).</p>
-    <p>החוקרים דירגו <span class="num" dir="ltr">702</span> מקצועות בארה״ב לפי סיווג המקצועות האמריקאי (<span dir="ltr">SOC</span>). הם בנו מודל למידת מכונה שמבוסס על מאפייני המשימות בכל מקצוע (מתוך מאגר <span dir="ltr">O*NET</span> של משרד העבודה האמריקאי) והעריכו את הסיכוי שהעבודה תוכל להתבצע על ידי מחשבים, למידת מכונה ורובוטים בתוך עשור או שניים. מקום 1 בדירוג הוא המקצוע הבטוח ביותר, ומקום 702 הוא המקצוע שבסיכון הגבוה ביותר.</p>
+    <p>החוקרים דירגו <span class="num" dir="ltr">702</span> מקצועות בארה״ב. הם בנו מודל למידת מכונה שמבוסס על מאפייני המשימות בכל מקצוע (מתוך מאגר <span dir="ltr">O*NET</span> של משרד העבודה האמריקאי) והעריכו את הסיכוי שהעבודה תוכל להתבצע על ידי מחשבים, למידת מכונה ורובוטים בתוך עשור או שניים.</p>
 
     <h3>נתון משלים: AI יוצר</h3>
-    <p>המחקר מאוקספורד נכתב לפני עידן הצ׳אטבוטים. לכן מוצג בכל כרטיס גם <strong>ציון ההתאמה ל-AI יוצר</strong> מתוך המחקר של Microsoft Research, <span dir="ltr">“Working with AI: Measuring the Applicability of Generative AI to Occupations”</span> (Tomlinson, Jaffe, Wang, Counts, Suri, 2025). הציון, בין 0 ל-1, מבוסס על כ-200 אלף שיחות אנונימיות עם Bing Copilot בארה״ב (ינואר–ספטמבר 2024), ומודד כמה מפעילויות העבודה במקצוע ה-AI כבר עוזר בהן או מבצע אותן בהצלחה.</p>
-    <p>החוקרים מדגישים שהציון הזה <strong>אינו</strong> מודד יכולת להחליף עובדים, ולכן הוא לא משפיע על הניקוד. במקצועות שהסיווג שלהם השתנה בין השנים ואין להם מקבילה ישירה, כתוב ״אין התאמה ישירה״.</p>
+    <p>המחקר מאוקספורד נכתב לפני עידן הצ׳אטבוטים. לכן, כשיש פער ברור בין שני המקצועות, מוצג מתחת לתשובה גם <strong>ציון ההתאמה ל-AI יוצר</strong> מתוך המחקר של Microsoft Research, <span dir="ltr">“Working with AI: Measuring the Applicability of Generative AI to Occupations”</span> (Tomlinson, Jaffe, Wang, Counts, Suri, 2025). הציון, בין 0 ל-1, מבוסס על כ-200 אלף שיחות אנונימיות עם Bing Copilot בארה״ב (ינואר–ספטמבר 2024), ומודד כמה מפעילויות העבודה במקצוע ה-AI כבר עוזר בהן או מבצע אותן בהצלחה.</p>
+    <p>החוקרים מדגישים שהציון הזה <strong>אינו</strong> מודד יכולת להחליף עובדים, ולכן הוא לא משפיע על הניקוד. במקצועות שאין להם מקבילה ישירה בנתוני Microsoft הוא לא מוצג.</p>
 
     <h3>מה כדאי לזכור</h3>
     <ul>
-      <li>הנתונים מתייחסים לשוק העבודה בארה״ב. בכל כרטיס מופיע שם המקצוע המקורי באנגלית וקוד ה-<span dir="ltr">SOC</span> שלו. השמות בעברית הם תרגום שלנו.</li>
+      <li>הנתונים מתייחסים לשוק העבודה בארה״ב. בכל כרטיס מופיע גם שם המקצוע המקורי באנגלית. השמות בעברית הם תרגום שלנו.</li>
       <li>ההסתברות מעריכה אם המקצוע <em>ניתן</em> לאוטומציה מבחינה טכנית. היא לא קובעת מתי זה יקרה ואם זה בכלל יקרה. רגולציה, עלויות והעדפות של אנשים משפיעות גם הן.</li>
-      <li>כדי שלכל זוג תהיה תשובה ברורה, המשחק מציג רק זוגות עם פער מספיק בין ההסתברויות. ככל שהרצף מתארך, הפער הנדרש קטן.</li>
+      <li>כדי שלכל זוג תהיה תשובה ברורה, המשחק מציג רק זוגות עם פער מספיק בין ההסתברויות. ככל שהרצף מתארך, הפער קטן והמשחק נעשה קשה יותר.</li>
     </ul>
 
     <h3>מקורות</h3>
@@ -119,7 +110,7 @@
     </ul>
 
     <div class="about-actions">
-      <button class="link-button" id="reset" type="button">איפוס התוצאה</button>
+      <button class="link" id="reset" type="button">איפוס התוצאה</button>
       <button class="next" id="close-about" type="button">חזרה למשחק</button>
     </div>
   </div>

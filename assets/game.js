@@ -22,16 +22,14 @@
     const q = (sel) => root.querySelector(sel);
     return {
       root,
-      tag: q(".job-tag"),
-      emoji: q(".job-emoji"),
-      name: q(".job-name"),
-      en: q(".job-en"),
-      result: q(".job-result"),
-      pct: q(".job-pct"),
-      fill: q(".meter-fill"),
-      rank: q(".job-rank"),
-      ms: q(".job-ms"),
-      stamp: q(".stamp"),
+      first: q(".badge-first"),
+      pick: q(".badge-pick"),
+      emoji: q(".choice-emoji"),
+      name: q(".choice-name"),
+      en: q(".choice-en"),
+      result: q(".choice-result"),
+      pct: q(".choice-pct"),
+      fill: q(".bar-fill"),
     };
   });
 
@@ -44,7 +42,6 @@
     correct: $("stat-correct"),
     streak: $("stat-streak"),
     best: $("stat-best"),
-    level: $("stat-level"),
     about: $("about"),
     share: $("share"),
     shareStatus: $("share-status"),
@@ -94,7 +91,7 @@
 
   // Keeps numbers like "29%" in left-to-right order inside Hebrew sentences.
   function ltr(text) {
-    return `\u2066${text}\u2069`;
+    return `⁦${text}⁩`;
   }
 
   function randomItem(list) {
@@ -134,7 +131,6 @@
     ui.correct.textContent = `${stats.correct}/${stats.answered}`;
     ui.streak.textContent = String(stats.streak);
     ui.best.textContent = String(stats.best);
-    ui.level.textContent = String(currentLevel());
     if (bump) {
       for (const el of [ui.streak, ui.best]) {
         el.classList.remove("bump");
@@ -145,21 +141,17 @@
   }
 
   function resetCard(card, job) {
-    const { root } = card;
-    root.disabled = false;
-    root.classList.remove("is-picked", "is-right", "is-wrong", "is-first");
-    root.setAttribute("aria-label", `${job.he}. ${job.en}`);
-    card.tag.textContent = "";
+    card.root.disabled = false;
+    card.root.setAttribute("aria-label", `${job.he}. ${job.en}`);
+    card.first.hidden = true;
+    card.pick.hidden = true;
+    card.pick.textContent = "";
     card.emoji.textContent = job.emoji;
     card.name.textContent = job.he;
-    const code = document.createElement("span");
-    code.className = "soc";
-    code.textContent = `SOC ${job.soc}`;
-    card.en.replaceChildren(`${job.en} · `, code);
+    card.en.textContent = job.en;
     card.result.hidden = true;
     card.pct.textContent = "";
     card.fill.style.width = "0";
-    card.stamp.hidden = true;
   }
 
   function newRound() {
@@ -169,7 +161,7 @@
     pair.forEach((job, i) => resetCard(cards[i], job));
     ui.verdict.classList.remove("is-right", "is-wrong");
     ui.verdictTitle.textContent = "מי יוחלף קודם?";
-    ui.verdictText.textContent = "לחצו על המקצוע שלדעתכם בסיכון גבוה יותר.";
+    ui.verdictText.textContent = "לחצו על אחד המקצועות.";
     ui.verdictNote.hidden = true;
     ui.next.hidden = true;
   }
@@ -181,7 +173,7 @@
       return;
     }
     const start = performance.now();
-    const duration = 750;
+    const duration = 700;
     const frame = (now) => {
       if (thisRound !== round) return;
       const k = Math.min(1, (now - start) / duration);
@@ -194,20 +186,16 @@
 
   function revealCard(card, job, isFirst, thisRound) {
     card.root.disabled = true;
+    card.root.setAttribute("aria-label", `${job.he}: ${formatPct(job.p)} סיכון לאוטומציה${isFirst ? ", יוחלף קודם" : ""}`);
     card.result.hidden = false;
-    card.root.classList.toggle("is-first", isFirst);
-    card.rank.textContent = `מקום ${ltr(job.rank)} מתוך 702 בדירוג`;
-    card.ms.textContent = job.ms === null
-      ? "AI יוצר (Microsoft): אין התאמה ישירה"
-      : `AI יוצר (Microsoft): ${ltr(formatScore(job.ms))} מתוך 1`;
     countUp(card.pct, job.p, thisRound);
     requestAnimationFrame(() => {
       card.fill.style.width = `${(job.p * 100).toFixed(2)}%`;
     });
     if (isFirst) {
-      const delay = reduceMotion.matches ? 0 : 650;
+      const delay = reduceMotion.matches ? 0 : 600;
       setTimeout(() => {
-        if (thisRound === round) card.stamp.hidden = false;
+        if (thisRound === round) card.first.hidden = false;
       }, delay);
     }
   }
@@ -245,8 +233,8 @@
 
     pair.forEach((job, i) => revealCard(cards[i], job, i === firstIndex, thisRound));
     const picked = cards[index];
-    picked.root.classList.add("is-picked", isRight ? "is-right" : "is-wrong");
-    picked.tag.textContent = isRight ? "✓ הבחירה שלך" : "✗ הבחירה שלך";
+    picked.pick.textContent = isRight ? "✓ הבחירה שלך" : "✗ הבחירה שלך";
+    picked.pick.hidden = false;
 
     let title;
     if (isRight) {
@@ -349,7 +337,7 @@
   ui.share.addEventListener("click", share);
   ui.reset.addEventListener("click", resetStats);
 
-  // In RTL the first card sits on the right.
+  // In RTL the first (red) card sits on the right.
   document.addEventListener("keydown", (e) => {
     if (ui.about.open || e.altKey || e.ctrlKey || e.metaKey) return;
     if (!revealed && e.key === "ArrowRight") { e.preventDefault(); choose(0); }
