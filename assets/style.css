@@ -11,6 +11,7 @@
   --blue: #1d4ed8;
   --blue-hover: #1e40af;
   --on-color: #ffffff;
+  --link: #1d4ed8;
   --ok: #15803d;
   --bad: #b42318;
   --shadow: rgba(15, 23, 42, 0.12);
@@ -27,9 +28,10 @@
     --ink-soft: #9aa4b5;
     --line: #253041;
     --red: #d92d20;
-    --red-hover: #e5483b;
+    --red-hover: #b42318;
     --blue: #2563eb;
-    --blue-hover: #3b74f0;
+    --blue-hover: #1d4ed8;
+    --link: #60a5fa;
     --ok: #4ade80;
     --bad: #f87171;
     --shadow: rgba(0, 0, 0, 0.5);
@@ -44,9 +46,10 @@
   --ink-soft: #9aa4b5;
   --line: #253041;
   --red: #d92d20;
-  --red-hover: #e5483b;
+  --red-hover: #b42318;
   --blue: #2563eb;
-  --blue-hover: #3b74f0;
+  --blue-hover: #1d4ed8;
+  --link: #60a5fa;
   --ok: #4ade80;
   --bad: #f87171;
   --shadow: rgba(0, 0, 0, 0.5);
@@ -83,6 +86,10 @@ button {
 .num {
   font-variant-numeric: tabular-nums;
   unicode-bidi: isolate;
+}
+
+.nowrap {
+  white-space: nowrap;
 }
 
 .wrap {
@@ -127,7 +134,6 @@ h1 {
 .stats {
   margin: 0;
   display: flex;
-  gap: 0;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--surface);
@@ -137,7 +143,6 @@ h1 {
 .stats > div {
   display: grid;
   justify-items: center;
-  gap: 0;
   min-width: 76px;
   padding: 8px 16px;
 }
@@ -156,6 +161,10 @@ h1 {
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.3;
+}
+
+.stats .num {
+  display: inline-block;
 }
 
 .bump {
@@ -191,16 +200,14 @@ h1 {
 .choice {
   --tone: var(--red);
   --tone-hover: var(--red-hover);
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 8px;
   min-width: 0;
-  min-height: 280px;
   margin: 0;
   padding: 28px;
-  border: 0;
+  border: 2px solid transparent;
   border-radius: var(--radius);
   background: var(--tone);
   color: var(--on-color);
@@ -263,29 +270,41 @@ h1 {
   unicode-bidi: isolate;
 }
 
-.badges {
-  position: absolute;
-  top: 18px;
-  left: 18px;
+/* The result area keeps its space before the answer so nothing jumps on reveal */
+.choice-result {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 12px;
+  visibility: hidden;
+}
+
+.choice.is-revealed .choice-result {
+  visibility: visible;
+}
+
+.result-badges {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  flex-wrap: wrap;
   gap: 6px;
+  min-height: 26px;
 }
 
 .badge {
-  padding: 3px 12px 4px;
+  padding: 2px 12px 3px;
   border-radius: 999px;
   font-size: 0.82rem;
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.5;
   white-space: nowrap;
 }
 
+/* Shown together with the numbers (so the layout settles at once), faded in once they finish counting */
 .badge-first {
   background: #ffffff;
   color: var(--tone);
-  animation: pop 0.25s ease-out both;
+  animation: pop 0.25s ease-out 0.6s both;
 }
 
 .badge-pick {
@@ -296,14 +315,6 @@ h1 {
 @keyframes pop {
   from { opacity: 0; transform: scale(0.6); }
   to { opacity: 1; transform: scale(1); }
-}
-
-.choice-result {
-  display: grid;
-  gap: 8px;
-  width: 100%;
-  margin-top: auto;
-  padding-top: 12px;
 }
 
 .choice-pct {
@@ -388,7 +399,7 @@ h1 {
   flex: 0 0 auto;
   min-height: 48px;
   padding: 10px 28px;
-  border: 0;
+  border: 2px solid transparent;
   border-radius: 12px;
   background: var(--ink);
   color: var(--surface);
@@ -403,7 +414,8 @@ h1 {
 }
 
 .next:focus-visible,
-.link:focus-visible {
+.link:focus-visible,
+.close:focus-visible {
   outline: 3px solid var(--blue);
   outline-offset: 3px;
 }
@@ -452,6 +464,11 @@ h1 {
   font-weight: 500;
 }
 
+/* An empty status stays in the accessibility tree but takes no gap slot */
+.share-status:empty {
+  position: absolute;
+}
+
 /* About dialog */
 .about {
   width: min(680px, calc(100% - 32px));
@@ -468,21 +485,52 @@ h1 {
   background: rgba(11, 16, 24, 0.55);
 }
 
-.about-body {
-  padding: 28px;
-  display: grid;
-  gap: 10px;
+.about-head {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 28px 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
 }
 
 .about h2 {
-  margin: 0 0 4px;
-  font-size: 1.6rem;
+  margin: 0;
+  font-size: 1.5rem;
   font-weight: 800;
   line-height: 1.2;
 }
 
 .about h2:focus {
   outline: none;
+}
+
+.close {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.close:hover {
+  background: var(--bg);
+}
+
+.about-body {
+  padding: 8px 28px 24px;
+  display: grid;
+  gap: 10px;
 }
 
 .about h3 {
@@ -503,8 +551,26 @@ h1 {
   gap: 6px;
 }
 
+.about .cite {
+  padding: 8px 14px;
+  border-left: 3px solid var(--line);
+  background: var(--bg);
+  border-radius: 0 8px 8px 0;
+  font-size: 0.92rem;
+  font-style: italic;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.cite-meta {
+  display: block;
+  font-style: normal;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
 .about a {
-  color: var(--blue);
+  color: var(--link);
   text-underline-offset: 3px;
 }
 
@@ -551,24 +617,15 @@ h1 {
   }
 
   .arena {
-    position: relative;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 10px;
   }
 
   .versus {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: 2;
-    width: 38px;
-    height: 38px;
-    transform: translate(-50%, -50%);
-    font-size: 0.9rem;
+    display: none;
   }
 
   .choice {
-    min-height: 220px;
     gap: 6px;
     padding: 16px 14px;
     border-radius: 14px;
@@ -591,23 +648,22 @@ h1 {
   }
 
   .choice-en {
-    font-size: 0.68rem;
-  }
-
-  .badges {
-    top: 12px;
-    left: 10px;
-    gap: 4px;
-  }
-
-  .badge {
-    padding: 2px 8px 3px;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
   }
 
   .choice-result {
     gap: 6px;
     padding-top: 8px;
+  }
+
+  .result-badges {
+    gap: 4px;
+    min-height: 22px;
+  }
+
+  .badge {
+    padding: 1px 8px 2px;
+    font-size: 0.75rem;
   }
 
   .choice-pct {
@@ -619,7 +675,7 @@ h1 {
   }
 
   .choice-label {
-    font-size: 0.74rem;
+    font-size: 0.78rem;
   }
 
   .verdict {
@@ -647,6 +703,66 @@ h1 {
   .next {
     width: 100%;
   }
+
+  .about-head {
+    padding: 14px 18px 10px;
+  }
+
+  .about-body {
+    padding: 8px 18px 20px;
+  }
+}
+
+/* Short screens such as phones held sideways */
+@media (max-height: 520px) and (min-width: 641px) {
+  .wrap {
+    padding-block: 12px 16px;
+    gap: 12px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  .choice {
+    gap: 4px;
+    padding: 16px 20px;
+  }
+
+  .choice-emoji {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 2px;
+    border-radius: 10px;
+    font-size: 1.4rem;
+  }
+
+  .choice-name {
+    font-size: 1.2rem;
+  }
+
+  .choice-pct {
+    font-size: 2rem;
+  }
+
+  .verdict {
+    min-height: 0;
+    padding: 12px 18px;
+  }
+}
+
+@media (forced-colors: active) {
+  .bar {
+    border: 1px solid CanvasText;
+  }
+
+  .bar-fill {
+    background: CanvasText;
+  }
+
+  .badge {
+    border: 1px solid CanvasText;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -654,6 +770,7 @@ h1 {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
     transition-duration: 0.01ms !important;
   }
 }

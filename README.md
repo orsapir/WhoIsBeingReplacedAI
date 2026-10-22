@@ -6,7 +6,7 @@
 
 - לוחצים על הכפתור האדום או הכחול, לפי המקצוע שלדעתכם יוחלף קודם (במקלדת: חץ ימינה לאדום, חץ שמאלה לכחול).
 - אחרי הבחירה מוצגים האחוזים של שני המקצועות, והמקצוע שבסיכון הגבוה יותר מקבל תגית ״יוחלף קודם״.
-- המשחק לא נגמר. כל תשובה נכונה מאריכה את הרצף, וכל 3 תשובות נכונות ברצף מעלות רמה. ברמות הגבוהות הפער בין שני המקצועות קטן יותר. טעות מאפסת את הרצף, והמשחק ממשיך.
+- המשחק לא נגמר. כל תשובה נכונה מאריכה את הרצף, וככל שהרצף מתארך הפער בין שני המקצועות קטן והזוגות נעשים קשים יותר. טעות מאפסת את הרצף, והמשחק ממשיך.
 - התוצאה והשיא נשמרים בדפדפן.
 
 ## מקורות הנתונים
@@ -61,12 +61,16 @@ python3 -m http.server 8000
 
 הקובץ `.github/workflows/pages.yml` מפרסם את האתר אוטומטית בכל push לענף הראשי. הוא בודק ש-`assets/jobs.js` תואם לנתוני המקור, ומעלה רק את `index.html` ואת התיקייה `assets/`.
 
-הפעלה חד-פעמית: ב-Settings → Pages בוחרים ב-Source את האפשרות **GitHub Actions**. אחר כך מריצים מחדש את ה-workflow (או דוחפים commit). הכתובת תהיה https://orsapir.github.io/WhoIsBeingReplacedAI/.
+הפעלה חד-פעמית, על ידי בעל המאגר:
 
-GitHub Pages זמין למאגר פרטי רק בחשבון בתשלום (Pro, Team או Enterprise). בחשבון חינמי צריך להפוך את המאגר לציבורי.
+1. GitHub Pages זמין למאגר פרטי רק בחשבון בתשלום (Pro, Team או Enterprise). בחשבון חינמי צריך קודם להפוך את המאגר לציבורי (Settings → General → Danger Zone → Change visibility).
+2. ב-Settings → Pages בוחרים ב-Source את האפשרות **GitHub Actions**.
+3. מריצים מחדש את ה-workflow: Actions → Deploy to GitHub Pages → Run workflow (או דוחפים commit).
+
+עד שהשלבים האלה מתבצעים, כל הרצה נכשלת בשלב Configure Pages עם השגיאה `Get Pages site failed`. זה צפוי. האתר עצמו תמיד ציבורי, גם כשהמאגר פרטי. הכתובת תהיה https://orsapir.github.io/WhoIsBeingReplacedAI/.
 
 ---
 
 ## English summary
 
-An endless Hebrew web game: two occupations per round, pick the one more likely to be replaced by computerisation/AI. The answer comes from Frey & Osborne's (Oxford, 2013) probability of computerisation for 702 US occupations. Each card also shows Microsoft Research's 2025 generative-AI applicability score as context only. The site is static (`index.html` + `assets/`). `scripts/build_data.py` regenerates `assets/jobs.js` from the curated list in `data/jobs_he.psv` and the source datasets in `data/sources/`.
+An endless Hebrew web game: two occupations per round, pick the one more likely to be replaced by computerisation/AI. The answer comes from Frey & Osborne's (Oxford, 2013) probability of computerisation for 702 US occupations. When the two jobs differ clearly, a note under the answer adds Microsoft Research's 2025 generative-AI applicability score as context only; it never affects scoring. The site is static (`index.html` + `assets/`). `scripts/build_data.py` regenerates `assets/jobs.js` from the curated list in `data/jobs_he.psv` and the source datasets in `data/sources/`.

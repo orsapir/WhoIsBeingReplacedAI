@@ -13,6 +13,11 @@
   const MILESTONES = new Set([5, 10, 15, 20, 25, 30, 40, 50, 75, 100, 150, 200]);
   const RIGHT_TITLES = ["צדקת!", "בול!", "נכון!", "יפה מאוד!"];
   const MS_MEANINGFUL_GAP = 0.05;
+  // Clicks this soon after "next" are treated as a stray double tap.
+  const ADVANCE_GUARD_MS = 400;
+  // Left-to-right isolate (U+2066) and pop directional isolate (U+2069).
+  const LRI = String.fromCodePoint(0x2066);
+  const PDI = String.fromCodePoint(0x2069);
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const $ = (id) => document.getElementById(id);
@@ -27,14 +32,15 @@
       emoji: q(".choice-emoji"),
       name: q(".choice-name"),
       en: q(".choice-en"),
-      result: q(".choice-result"),
       pct: q(".choice-pct"),
       fill: q(".bar-fill"),
     };
   });
 
   const ui = {
+    arena: $("arena"),
     verdict: $("verdict"),
+    verdictCopy: $("verdict-copy"),
     verdictTitle: $("verdict-title"),
     verdictText: $("verdict-text"),
     verdictNote: $("verdict-note"),
@@ -53,6 +59,7 @@
   let pair = null;
   let revealed = false;
   let round = 0;
+  let advancedAt = -Infinity;
   const recent = [];
 
   function loadStats() {
@@ -79,6 +86,10 @@
     return Math.min(LEVEL_GAPS.length, 1 + Math.floor(stats.streak / ROUNDS_PER_LEVEL));
   }
 
+  function justAdvanced() {
+    return performance.now() - advancedAt < ADVANCE_GUARD_MS;
+  }
+
   // 0.97 -> "97%", 0.042 -> "4.2%", 0.0028 -> "0.28%"
   function formatPct(p) {
     const v = p * 100;
@@ -91,7 +102,7 @@
 
   // Keeps numbers like "29%" in left-to-right order inside Hebrew sentences.
   function ltr(text) {
-    return `⁦${text}⁩`;
+    return `${LRI}${text}${PDI}`;
   }
 
   function randomItem(list) {
@@ -142,15 +153,16 @@
 
   function resetCard(card, job) {
     card.root.disabled = false;
-    card.root.setAttribute("aria-label", `${job.he}. ${job.en}`);
+    card.root.classList.remove("is-revealed");
+    // The button's own text (Hebrew name + lang="en" subtitle) is its accessible name.
+    card.root.removeAttribute("aria-label");
     card.first.hidden = true;
     card.pick.hidden = true;
     card.pick.textContent = "";
     card.emoji.textContent = job.emoji;
     card.name.textContent = job.he;
     card.en.textContent = job.en;
-    card.result.hidden = true;
-    card.pct.textContent = "";
+    card.pct.textContent = formatPct(0);
     card.fill.style.width = "0";
   }
 
@@ -159,6 +171,8 @@
     revealed = false;
     pair = pickPair(currentLevel());
     pair.forEach((job, i) => resetCard(cards[i], job));
+    // Resetting the prompt is not news; only answers are announced.
+    ui.verdictCopy.setAttribute("aria-live", "off");
     ui.verdict.classList.remove("is-right", "is-wrong");
     ui.verdictTitle.textContent = "מי יוחלף קודם?";
     ui.verdictText.textContent = "לחצו על אחד המקצועות.";
@@ -172,11 +186,12 @@
       el.textContent = final;
       return;
     }
+    el.textContent = formatPct(0);
     const start = performance.now();
     const duration = 700;
     const frame = (now) => {
       if (thisRound !== round) return;
-      const k = Math.min(1, (now - start) / duration);
+      const k = Math.max(0, Math.min(1, (now - start) / duration));
       const eased = 1 - Math.pow(1 - k, 3);
       el.textContent = k < 1 ? formatPct(p * eased) : final;
       if (k < 1) requestAnimationFrame(frame);
@@ -186,18 +201,13 @@
 
   function revealCard(card, job, isFirst, thisRound) {
     card.root.disabled = true;
+    card.root.classList.add("is-revealed");
     card.root.setAttribute("aria-label", `${job.he}: ${formatPct(job.p)} סיכון לאוטומציה${isFirst ? ", יוחלף קודם" : ""}`);
-    card.result.hidden = false;
     countUp(card.pct, job.p, thisRound);
     requestAnimationFrame(() => {
       card.fill.style.width = `${(job.p * 100).toFixed(2)}%`;
     });
-    if (isFirst) {
-      const delay = reduceMotion.matches ? 0 : 600;
-      setTimeout(() => {
-        if (thisRound === round) card.first.hidden = false;
-      }, delay);
-    }
+    card.first.hidden = !isFirst;
   }
 
   function msNote(first, second) {
@@ -243,6 +253,7 @@
     } else {
       title = "לא הפעם";
     }
+    ui.verdictCopy.setAttribute("aria-live", "polite");
     ui.verdict.classList.add(isRight ? "is-right" : "is-wrong");
     ui.verdictTitle.textContent = title;
 
@@ -276,6 +287,7 @@
   }
 
   async function share() {
+    if (justAdvanced()) return;
     const text = shareText();
     if (navigator.share) {
       try {
@@ -294,6 +306,7 @@
   }
 
   function openAbout() {
+    if (justAdvanced()) return;
     if (typeof ui.about.showModal === "function") ui.about.showModal();
     else ui.about.setAttribute("open", "");
     $("about-title").focus({ preventScroll: true });
@@ -306,11 +319,13 @@
   }
 
   let resetArmed = false;
+  let resetTimer = 0;
   function resetStats() {
+    clearTimeout(resetTimer);
     if (!resetArmed) {
       resetArmed = true;
       ui.reset.textContent = "לחצו שוב כדי לאפס";
-      setTimeout(() => {
+      resetTimer = setTimeout(() => {
         resetArmed = false;
         ui.reset.textContent = "איפוס התוצאה";
       }, 4000);
@@ -324,13 +339,23 @@
     newRound();
   }
 
-  cards.forEach((card, i) => card.root.addEventListener("click", () => choose(i)));
+  cards.forEach((card, i) => {
+    card.root.addEventListener("click", () => {
+      if (!justAdvanced()) choose(i);
+    });
+    // A held Enter/Space on "next" must not auto-repeat into an answer.
+    card.root.addEventListener("keydown", (e) => {
+      if (e.repeat && (e.key === "Enter" || e.key === " ")) e.preventDefault();
+    });
+  });
   ui.next.addEventListener("click", () => {
+    advancedAt = performance.now();
     newRound();
     cards[0].root.focus({ preventScroll: true });
   });
   $("open-about").addEventListener("click", openAbout);
   $("close-about").addEventListener("click", closeAbout);
+  $("close-about-x").addEventListener("click", closeAbout);
   ui.about.addEventListener("click", (e) => {
     if (e.target === ui.about) closeAbout();
   });
@@ -344,13 +369,14 @@
     else if (!revealed && e.key === "ArrowLeft") { e.preventDefault(); choose(1); }
   });
 
+  renderStats(false);
+
   if (JOBS.length < 2) {
+    ui.arena.hidden = true;
     ui.verdictTitle.textContent = "הנתונים לא נטענו";
     ui.verdictText.textContent = "הקובץ assets/jobs.js חסר. הריצו את scripts/build_data.py ורעננו את הדף.";
-    cards.forEach((c) => { c.root.disabled = true; });
     return;
   }
 
-  renderStats(false);
   newRound();
 })();

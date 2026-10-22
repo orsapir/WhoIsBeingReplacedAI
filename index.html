@@ -29,17 +29,17 @@
     </dl>
   </header>
 
-  <main class="arena">
+  <main class="arena" id="arena">
     <button class="choice choice-red" id="job-0" type="button">
-      <span class="badges" aria-hidden="true">
-        <span class="badge badge-first" hidden>יוחלף קודם</span>
-        <span class="badge badge-pick" hidden></span>
-      </span>
       <span class="choice-emoji" aria-hidden="true"></span>
       <span class="choice-name"></span>
-      <span class="choice-en" dir="ltr"></span>
-      <span class="choice-result" hidden>
-        <span class="choice-pct num" dir="ltr"></span>
+      <span class="choice-en" dir="ltr" lang="en"></span>
+      <span class="choice-result">
+        <span class="result-badges" aria-hidden="true">
+          <span class="badge badge-first" hidden>יוחלף קודם</span>
+          <span class="badge badge-pick" hidden></span>
+        </span>
+        <span class="choice-pct num" dir="ltr">0%</span>
         <span class="bar" aria-hidden="true"><span class="bar-fill"></span></span>
         <span class="choice-label">סיכון לאוטומציה</span>
       </span>
@@ -48,32 +48,32 @@
     <div class="versus" aria-hidden="true">או</div>
 
     <button class="choice choice-blue" id="job-1" type="button">
-      <span class="badges" aria-hidden="true">
-        <span class="badge badge-first" hidden>יוחלף קודם</span>
-        <span class="badge badge-pick" hidden></span>
-      </span>
       <span class="choice-emoji" aria-hidden="true"></span>
       <span class="choice-name"></span>
-      <span class="choice-en" dir="ltr"></span>
-      <span class="choice-result" hidden>
-        <span class="choice-pct num" dir="ltr"></span>
+      <span class="choice-en" dir="ltr" lang="en"></span>
+      <span class="choice-result">
+        <span class="result-badges" aria-hidden="true">
+          <span class="badge badge-first" hidden>יוחלף קודם</span>
+          <span class="badge badge-pick" hidden></span>
+        </span>
+        <span class="choice-pct num" dir="ltr">0%</span>
         <span class="bar" aria-hidden="true"><span class="bar-fill"></span></span>
         <span class="choice-label">סיכון לאוטומציה</span>
       </span>
     </button>
   </main>
 
-  <section class="verdict" id="verdict" aria-live="polite">
-    <div class="verdict-copy">
+  <section class="verdict" id="verdict">
+    <div class="verdict-copy" id="verdict-copy" aria-live="polite">
       <p class="verdict-title" id="verdict-title">מי יוחלף קודם?</p>
       <p class="verdict-text" id="verdict-text">לחצו על אחד המקצועות.</p>
       <p class="verdict-note" id="verdict-note" hidden></p>
     </div>
-    <button class="next" id="next" type="button" hidden>לזוג הבא ←</button>
+    <button class="next" id="next" type="button" hidden>לזוג הבא <span aria-hidden="true">←</span></button>
   </section>
 
   <footer class="foot">
-    <p>הנתונים: אוניברסיטת אוקספורד (<span dir="ltr">Frey &amp; Osborne, 2013</span>) ו-<span dir="ltr">Microsoft Research</span> (2025)</p>
+    <p>הנתונים: אוניברסיטת אוקספורד (<span class="nowrap" dir="ltr" lang="en">Frey &amp; Osborne, 2013</span>) ו-<span dir="ltr" lang="en">Microsoft Research</span> (2025)</p>
     <div class="foot-actions">
       <button class="link" id="open-about" type="button">על הנתונים</button>
       <button class="link" id="share" type="button">שיתוף השיא</button>
@@ -83,15 +83,20 @@
 </div>
 
 <dialog class="about" id="about" aria-labelledby="about-title">
-  <div class="about-body">
+  <div class="about-head">
     <h2 id="about-title" tabindex="-1">על הנתונים</h2>
-
+    <button class="close" id="close-about-x" type="button" aria-label="סגירה">×</button>
+  </div>
+  <div class="about-body">
     <h3>המדד שקובע את התשובה</h3>
-    <p>כל אחוז במשחק הוא <strong>ההסתברות למחשוב</strong> של המקצוע, מתוך המחקר של קרל בנדיקט פריי ומייקל אוסבורן מאוניברסיטת אוקספורד, <span dir="ltr">“The Future of Employment: How Susceptible Are Jobs to Computerisation?”</span> (2013, ובגרסת כתב עת ב-<span dir="ltr">Technological Forecasting and Social Change</span>, 2017).</p>
-    <p>החוקרים דירגו <span class="num" dir="ltr">702</span> מקצועות בארה״ב. הם בנו מודל למידת מכונה שמבוסס על מאפייני המשימות בכל מקצוע (מתוך מאגר <span dir="ltr">O*NET</span> של משרד העבודה האמריקאי) והעריכו את הסיכוי שהעבודה תוכל להתבצע על ידי מחשבים, למידת מכונה ורובוטים בתוך עשור או שניים.</p>
+    <p>כל אחוז במשחק הוא <strong>ההסתברות למחשוב</strong> של המקצוע, מתוך המחקר של קרל בנדיקט פריי ומייקל אוסבורן מאוניברסיטת אוקספורד (2013, ובגרסת כתב עת ב-2017):</p>
+    <p class="cite" dir="ltr" lang="en">The Future of Employment: How Susceptible Are Jobs to Computerisation? <span class="cite-meta">Technological Forecasting and Social Change, 2017</span></p>
+    <p>החוקרים דירגו <span class="num" dir="ltr">702</span> מקצועות בארה״ב. הם בנו מודל למידת מכונה שמבוסס על מאפייני המשימות בכל מקצוע (מתוך מאגר <span dir="ltr" lang="en">O*NET</span> של משרד העבודה האמריקאי) והעריכו את הסיכוי שהעבודה תוכל להתבצע על ידי מחשבים, למידת מכונה ורובוטים בתוך עשור או שניים.</p>
 
     <h3>נתון משלים: AI יוצר</h3>
-    <p>המחקר מאוקספורד נכתב לפני עידן הצ׳אטבוטים. לכן, כשיש פער ברור בין שני המקצועות, מוצג מתחת לתשובה גם <strong>ציון ההתאמה ל-AI יוצר</strong> מתוך המחקר של Microsoft Research, <span dir="ltr">“Working with AI: Measuring the Applicability of Generative AI to Occupations”</span> (Tomlinson, Jaffe, Wang, Counts, Suri, 2025). הציון, בין 0 ל-1, מבוסס על כ-200 אלף שיחות אנונימיות עם Bing Copilot בארה״ב (ינואר–ספטמבר 2024), ומודד כמה מפעילויות העבודה במקצוע ה-AI כבר עוזר בהן או מבצע אותן בהצלחה.</p>
+    <p>המחקר מאוקספורד נכתב לפני עידן הצ׳אטבוטים. לכן, כשיש פער ברור בין שני המקצועות, מוצג מתחת לתשובה גם <strong>ציון ההתאמה ל-AI יוצר</strong> מתוך מחקר של <span dir="ltr" lang="en">Microsoft Research</span> (2025):</p>
+    <p class="cite" dir="ltr" lang="en">Working with AI: Measuring the Applicability of Generative AI to Occupations <span class="cite-meta">Tomlinson, Jaffe, Wang, Counts, Suri, 2025</span></p>
+    <p>הציון, בין 0 ל-1, מבוסס על כ-200 אלף שיחות אנונימיות עם <span dir="ltr" lang="en">Bing Copilot</span> בארה״ב (ינואר–ספטמבר 2024), ומודד כמה מפעילויות העבודה במקצוע ה-AI כבר עוזר בהן או מבצע אותן בהצלחה.</p>
     <p>החוקרים מדגישים שהציון הזה <strong>אינו</strong> מודד יכולת להחליף עובדים, ולכן הוא לא משפיע על הניקוד. במקצועות שאין להם מקבילה ישירה בנתוני Microsoft הוא לא מוצג.</p>
 
     <h3>מה כדאי לזכור</h3>
@@ -103,9 +108,9 @@
 
     <h3>מקורות</h3>
     <ul class="sources">
-      <li><a href="https://www.oxfordmartin.ox.ac.uk/publications/the-future-of-employment" target="_blank" rel="noopener">Frey &amp; Osborne (2013), Oxford Martin School</a></li>
+      <li><a href="https://www.oxfordmartin.ox.ac.uk/publications/the-future-of-employment" target="_blank" rel="noopener" lang="en">Frey &amp; Osborne (2013), Oxford Martin School</a></li>
       <li><a href="https://doi.org/10.1016/j.techfore.2016.08.019" target="_blank" rel="noopener">הגרסה בכתב העת (DOI)</a></li>
-      <li><a href="https://arxiv.org/abs/2507.07935" target="_blank" rel="noopener">Tomlinson et al. (2025), arXiv:2507.07935</a></li>
+      <li><a href="https://arxiv.org/abs/2507.07935" target="_blank" rel="noopener" lang="en">Tomlinson et al. (2025), arXiv:2507.07935</a></li>
       <li><a href="https://github.com/microsoft/working-with-ai" target="_blank" rel="noopener">קובצי הנתונים של Microsoft (CC BY 4.0)</a></li>
     </ul>
 
