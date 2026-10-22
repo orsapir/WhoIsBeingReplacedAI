@@ -157,6 +157,7 @@
     // The button's own text (Hebrew name + lang="en" subtitle) is its accessible name.
     card.root.removeAttribute("aria-label");
     card.first.hidden = true;
+    card.first.textContent = "יוחלף קודם";
     card.pick.hidden = true;
     card.pick.textContent = "";
     card.emoji.textContent = job.emoji;
@@ -242,9 +243,13 @@
     renderStats(isRight);
 
     pair.forEach((job, i) => revealCard(cards[i], job, i === firstIndex, thisRound));
-    const picked = cards[index];
-    picked.pick.textContent = isRight ? "✓ הבחירה שלך" : "✗ הבחירה שלך";
-    picked.pick.hidden = false;
+    // One badge per card keeps the badge row to a single line on phones.
+    if (isRight) {
+      cards[index].first.textContent = "✓ יוחלף קודם";
+    } else {
+      cards[index].pick.textContent = "✗ הבחירה שלך";
+      cards[index].pick.hidden = false;
+    }
 
     let title;
     if (isRight) {
@@ -333,10 +338,13 @@
     }
     resetArmed = false;
     ui.reset.textContent = "התוצאה אופסה";
+    resetTimer = setTimeout(() => {
+      ui.reset.textContent = "איפוס התוצאה";
+    }, 2500);
     stats = { ...defaults };
     saveStats();
     renderStats(false);
-    newRound();
+    if (JOBS.length >= 2) newRound();
   }
 
   cards.forEach((card, i) => {
@@ -351,6 +359,8 @@
   ui.next.addEventListener("click", () => {
     advancedAt = performance.now();
     newRound();
+    // Answering may have scrolled down to the panel; start each pair from the top.
+    window.scrollTo(0, 0);
     cards[0].root.focus({ preventScroll: true });
   });
   $("open-about").addEventListener("click", openAbout);
